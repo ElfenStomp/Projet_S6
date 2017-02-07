@@ -4,41 +4,29 @@
 #include <stdlib.h>
 #include <string.h>
 
+ 
 /*
- Definition of tokens constructed by the lexer
+ * I didn't used :
+ *      void lexer(FILE * f, struct token * tok);
+ *      struct token;
+ *      enum token_type;
+ *
+ * The work TO DO :
+ *      -> check if the file is correct before use 'parse' function
+ *      -> create other sapo*.["ok","err"].txt files and make differents tests
  */
-
-enum token_type {
-    ID,
-    NUMBER,
-    STAR,
-    ARROW,
-    DOLLAR,
-    PERCENT,
-    END_OF_FILE,
-};
 
 #define TOKEN_SIZE 256
 
-struct token {
-    enum token_type type;
-    char str[TOKEN_SIZE];
-};
-
+/*
+    To be able to return 2 numbers
+*/
 struct coord {
     int x;
     int y;
 };
-
 /*
- Lexer
- POST: tok contains the next token from stream f. The token
- value (str) is truncated at TOKEN_SIZE-1 bytes.
- */
-void lexer(FILE * f, struct token * tok);
-
-/*
- Find board config
+    Find board config
  */
 struct coord board_config(FILE * f, FILE * out){
     rewind(f);
@@ -49,7 +37,7 @@ struct coord board_config(FILE * f, FILE * out){
     char chain[TOKEN_SIZE] = "";
     do {
         c = fgetc(f);
-        i = atoi(&c); // seek first carac. that is a number
+        i = atoi(&c); // seek first carac. which is a number
         if(i > 0){
             fseek(f, -1, SEEK_CUR); // replace cursor
             fscanf(f, "%d %d",&coord.y, &coord.x);
@@ -61,7 +49,7 @@ struct coord board_config(FILE * f, FILE * out){
 }
 
 /*
- Count card types and Count cards
+    Count card types and Count cards
  */
 void card_types(FILE * f, FILE * out){
     rewind(f);
@@ -85,7 +73,7 @@ void card_types(FILE * f, FILE * out){
 }
 
 /*
- Count and give objectives and holes coordinates
+    Count and give objectives and holes coordinates
  */
 void get_objectives_holes(FILE * f, FILE * out, struct coord coord){
     rewind(f);
@@ -99,7 +87,7 @@ void get_objectives_holes(FILE * f, FILE * out, struct coord coord){
     int *rowPercent = malloc(sizeof(int));
     int *colPercent = malloc(sizeof(int));
     int col = 0;
-    int row = coord.x-1; // TO GENERALIZE
+    int row = coord.x-1;
     
     char c;
     char chain[TOKEN_SIZE+100] = "";
@@ -107,7 +95,7 @@ void get_objectives_holes(FILE * f, FILE * out, struct coord coord){
         c = fgetc(f);
         col = 0;
         if (!(c >= 'A' && c <= 'Z') && !(c >= '0' && c <= '9') && !(c == '#') && (c != '\n') && (c != ' ')){
-            while(c != '\n' && col < coord.y){ // TO GENERALIZE
+            while(c != '\n' && col < coord.y){
                 if(c == '*'){
                     nbStars++;
                 } else if(c == '>'){
@@ -149,7 +137,7 @@ void get_objectives_holes(FILE * f, FILE * out, struct coord coord){
 }
 
 /*
- Check if Boulder or Break card is authorized
+    Check if Boulder or Break card is authorized
  */
 void check_boulder_breaks(FILE * f, FILE * out){
     rewind(f);
@@ -172,7 +160,7 @@ void check_boulder_breaks(FILE * f, FILE * out){
 }
 
 /*
- Compare the number of Break cards with Repair cards
+    Compare the number of Break cards with Repair cards
  */
 void check_nb_break(FILE * f, FILE * out){
     rewind(f);
@@ -200,25 +188,19 @@ void check_nb_break(FILE * f, FILE * out){
 }
 
 /*
- Parse a Sapotache file
- PRECOND: f has the expected structure !!!
+    Parse a Sapotache file
+    PRECOND: f has the expected structure !!!
  */
-void parse(FILE * f){
-    FILE * out = fopen("out.txt", "w"); // RENAME THE OUTPUT
-    if (out == NULL) {
-        assert(0);
-    }
+void parse(FILE * f, FILE * out){
     struct coord coord = board_config(f, out);
     card_types(f, out);
     get_objectives_holes(f, out, coord);
     check_boulder_breaks(f, out);
     check_nb_break(f, out);
-    
-    fclose(out);
 }
 
 /*
- Usage function
+    Usage function
  */
 void usage(char * execname) {
     fprintf(stderr, "Usage: %s <filename>\n", execname);
@@ -241,9 +223,20 @@ int main(int argc, char * argv[]) {
         return EXIT_FAILURE;
     }
     
-    parse(f);
+    char *name = argv[1];
+    name[14] = 's';
+    FILE * out = fopen(name, "w");
+    if (out == NULL) {
+        printf("*** %s: cannot open file %s\n", argv[0], argv[1]);
+        return EXIT_FAILURE;
+    }
     
+    parse(f, out);
+    
+    fclose(out);
     fclose(f);
+    
+    printf("====> Results saved in %s <====\n", name);
     
     return EXIT_SUCCESS;
 }
