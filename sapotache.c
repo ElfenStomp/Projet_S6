@@ -7,6 +7,7 @@
 /*
   Definition of tokens constructed by the lexer
 */
+
 enum token_type {
   ID,
   NUMBER,
