@@ -5,24 +5,24 @@
 #include <string.h>
 
 /*
-  Definition of tokens constructed by the lexer
-*/
+ Definition of tokens constructed by the lexer
+ */
 
 enum token_type {
-  ID,
-  NUMBER,
-  STAR,
-  ARROW,
-  DOLLAR,
-  PERCENT,
-  END_OF_FILE,
+    ID,
+    NUMBER,
+    STAR,
+    ARROW,
+    DOLLAR,
+    PERCENT,
+    END_OF_FILE,
 };
 
 #define TOKEN_SIZE 256
 
 struct token {
-  enum token_type type;
-  char str[TOKEN_SIZE];
+    enum token_type type;
+    char str[TOKEN_SIZE];
 };
 
 struct coord {
@@ -31,15 +31,15 @@ struct coord {
 };
 
 /*
-  Lexer
-  POST: tok contains the next token from stream f. The token
-  value (str) is truncated at TOKEN_SIZE-1 bytes.
-*/
+ Lexer
+ POST: tok contains the next token from stream f. The token
+ value (str) is truncated at TOKEN_SIZE-1 bytes.
+ */
 void lexer(FILE * f, struct token * tok);
 
 /*
-    Find board config
-*/
+ Find board config
+ */
 struct coord board_config(FILE * f, FILE * out){
     rewind(f);
     struct coord coord;
@@ -61,8 +61,8 @@ struct coord board_config(FILE * f, FILE * out){
 }
 
 /*
-    Count card types and Count cards
-*/
+ Count card types and Count cards
+ */
 void card_types(FILE * f, FILE * out){
     rewind(f);
     int count = 0;
@@ -82,12 +82,11 @@ void card_types(FILE * f, FILE * out){
     } while(fgets(chain, TOKEN_SIZE, f) != NULL);
     fprintf(out,"Card types    : %d\n",count);
     fprintf(out,"Nb of cards   : %d\n",nb_card);
-<<<<<<< HEAD
 }
 
 /*
-    Count and give objectives and holes coordinates
-*/
+ Count and give objectives and holes coordinates
+ */
 void get_objectives_holes(FILE * f, FILE * out, struct coord coord){
     rewind(f);
     int nbStars = 0;
@@ -126,7 +125,7 @@ void get_objectives_holes(FILE * f, FILE * out, struct coord coord){
                     rowDollars[nbDollars - 1] = row;
                     colDollars[nbDollars - 1] = col;
                 }
-            
+                
                 col++;
                 c = fgetc(f);
             }
@@ -150,8 +149,8 @@ void get_objectives_holes(FILE * f, FILE * out, struct coord coord){
 }
 
 /*
-    Check if Boulder or Break card is authorized
-*/
+ Check if Boulder or Break card is authorized
+ */
 void check_boulder_breaks(FILE * f, FILE * out){
     rewind(f);
     int check[2] = {0, 0};
@@ -173,102 +172,8 @@ void check_boulder_breaks(FILE * f, FILE * out){
 }
 
 /*
-    Compare the number of Break cards with Repair cards
-*/
-=======
-}
-
-/*
-    Count and give objectives and holes coordinates
-*/
-void get_objectives_holes(FILE * f, FILE * out, struct coord coord){
-    rewind(f);
-    int nbStars = 0;
-    int nbArrows = 0;
-    int nbDollars = 0;
-    int nbPercent = 0;
-    
-    int *rowDollars = malloc(sizeof(int));
-    int *colDollars = malloc(sizeof(int));
-    int *rowPercent = malloc(sizeof(int));
-    int *colPercent = malloc(sizeof(int));
-    int col = 0;
-    int row = coord.x-1; // TO GENERALIZE
-    
-    char c;
-    char chain[TOKEN_SIZE+100] = "";
-    do {
-        c = fgetc(f);
-        col = 0;
-        if (!(c >= 'A' && c <= 'Z') && !(c >= '0' && c <= '9') && !(c == '#') && (c != '\n') && (c != ' ')){
-            while(c != '\n' && col < coord.y){ // TO GENERALIZE
-                if(c == '*'){
-                    nbStars++;
-                } else if(c == '>'){
-                    nbArrows++;
-                } else if(c == '%'){
-                    nbPercent++;
-                    rowPercent = realloc(rowPercent, nbPercent*sizeof(int));
-                    colPercent = realloc(colPercent, nbPercent*sizeof(int));
-                    rowPercent[nbPercent - 1] = row;
-                    colPercent[nbPercent - 1] = col;
-                } else if(c == '$'){
-                    nbDollars++;
-                    rowDollars = realloc(rowDollars, nbDollars*sizeof(int));
-                    colDollars = realloc(colDollars, nbDollars*sizeof(int));
-                    rowDollars[nbDollars - 1] = row;
-                    colDollars[nbDollars - 1] = col;
-                }
-            
-                col++;
-                c = fgetc(f);
-            }
-            fseek(f, -1, SEEK_CUR);
-            row--;
-        }
-    } while(fgets(chain, TOKEN_SIZE+100, f) != NULL && row >= 0);
-    fprintf(out, "Objectives    : %d - ", nbDollars);
-    for (int i = 0; i < nbDollars; i++){
-        fprintf(out, "(%d,%d) ", colDollars[i], rowDollars[i]);
-    }
-    fprintf(out, "\nHoles         : %d - ", nbPercent);
-    for (int i = 0; i < nbPercent; i++){
-        fprintf(out, "(%d,%d) ", colPercent[i], rowPercent[i]);
-    }
-    fprintf(out, "\n");
-    free(rowPercent);
-    free(colPercent);
-    free(rowDollars);
-    free(colDollars);
-}
-
-/*
-    Check if Boulder or Break card is authorized
-*/
-void check_boulder_breaks(FILE * f, FILE * out){
-    rewind(f);
-    int check[2] = {0, 0};
-    char c;
-    char chain[TOKEN_SIZE] = "";
-    do {
-        c = fgetc(f);
-        if (c == 'B'){
-            c = fgetc(f);
-            if (c == 'O'){
-                check[0] = 1;
-            } else if (c == '_'){
-                check[1] = 1;
-            }
-        }
-    } while(fgets(chain, TOKEN_SIZE, f) != NULL);
-    fprintf(out, "Allow boulder : %s\n",(check[0] == 1)?"yes":"no");
-    fprintf(out, "Allow breaks  : %s\n",(check[1] == 1)?"yes":"no");
-}
-
-/*
-    Compare the number of Break cards with Repair cards
-*/
->>>>>>> f3f723f5e592df1121ff3d917a10f432aa096d65
+ Compare the number of Break cards with Repair cards
+ */
 void check_nb_break(FILE * f, FILE * out){
     rewind(f);
     int nbBreak = 0;
@@ -295,9 +200,9 @@ void check_nb_break(FILE * f, FILE * out){
 }
 
 /*
-  Parse a Sapotache file
-  PRECOND: f has the expected structure !!!
-*/
+ Parse a Sapotache file
+ PRECOND: f has the expected structure !!!
+ */
 void parse(FILE * f){
     FILE * out = fopen("out.txt", "w"); // RENAME THE OUTPUT
     if (out == NULL) {
@@ -314,31 +219,31 @@ void parse(FILE * f){
 
 /*
  Usage function
-*/
+ */
 void usage(char * execname) {
-  fprintf(stderr, "Usage: %s <filename>\n", execname);
-  fprintf(stderr, "   where <filename> is the file to parse\n");
+    fprintf(stderr, "Usage: %s <filename>\n", execname);
+    fprintf(stderr, "   where <filename> is the file to parse\n");
 }
 
 
-/* 
- * Main function 
+/*
+ * Main function
  */
 int main(int argc, char * argv[]) {
-  if (argc != 2) {
-    usage(argv[0]);
-    return EXIT_FAILURE;
-  }
-
-  FILE * f = fopen(argv[1], "r");
-  if (f == NULL) {
-    printf("*** %s: cannot open file %s\n", argv[0], argv[1]);
-    return EXIT_FAILURE;
-  }
-
-  parse(f);
-
-  fclose(f);
-
-  return EXIT_SUCCESS;
+    if (argc != 2) {
+        usage(argv[0]);
+        return EXIT_FAILURE;
+    }
+    
+    FILE * f = fopen(argv[1], "r");
+    if (f == NULL) {
+        printf("*** %s: cannot open file %s\n", argv[0], argv[1]);
+        return EXIT_FAILURE;
+    }
+    
+    parse(f);
+    
+    fclose(f);
+    
+    return EXIT_SUCCESS;
 }
