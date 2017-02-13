@@ -4,7 +4,7 @@ Code Style
 Code-style for projects.
 
 ## Introduction
-In this file, you can check the the code styling and rules conventions for projects. 
+In this very file, you can check the the code styling and rules conventions for projects. 
 
 ## Tabs and indentation
  - Tab size is 4 spaces
