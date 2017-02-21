@@ -1,0 +1,42 @@
+#----------------------------#
+Erreurs à gérer:
+#----------------------------#
+En général :
+- vérifier que chaque rubrique existe (a été correctement saisie)
+- qu'aucun caractère impromptu ne se balade hors commentaire (ex de fichier d'erreur, un commentaire sans #)
+
+#----------------------------#
+Configuration : 
+- vérifier que la configuation a bien été saisie
+- vérifier que le board n'est pas trop grand : ex valide : 9 2 / ex invalide : 100 100
+- vérifier que c'est bien 2 nombres qui sont saisies : ex valide : 9 2 / ex invalide : 9 2 3 /ex invalide : 9 test 3
+- Les nombres définissant la configuration doivent être positif et réaliste (fixer un maximum, cf. plus haut)
+
+#----------------------------#
+Plateau
+- vérifier que le plateau a bien été saisie
+- vérifier qu'il y est bien un unique départ >
+- vérifier qu'il y est bien au moins une arrivée $ (+ mémoriser position)
+- vérifier qu'il y a autant de lignes et de colonnes (cf. nombre de caractères sur la ligne) que la configuration précédente (ni plus, ni moins)
+- vérifier que tous les caractères sont bien des >, $, *, % (et pas autre chose)
+#----------------------------#
+Cartes
+- cartes possible (=8): 
+V_LINE, 	H_LINE
+V_CROSS, 	H_CROSS
+L_TURN, 	R_TURN
+X_CROSS, 	D_END
+- Toutes autres cartes doit être interdites ou non comptabilisé (Invalide : Y_LINE, H_LINES, etc.)
+- Attention a autoriser une même carte écrite en minuscule
+- Les nombres suivants le nom des cartes doivent être positif et réaliste (fixer un maximum)
+- Les nombres suivants les cartes ne doivent pas être des caractères
+- Ne pas autoriser 2 nombres (ou autre chose qu'un seul nombre) derrière une carte
+#----------------------------#
+Cartes Bonus
+- cartes possible (=7): 
+BOULDER
+B_AXE, 	R_AXE,
+B_LAMP, R_LAMP,
+B_CART, R_CART,
+		R_ALL
+- Même consignes que pour les cartes normales
