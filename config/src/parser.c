@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <ctype.h>
 #include "token_list.h"
 #include "parser.h"
 
@@ -74,7 +75,7 @@ void lexer(FILE *f, struct token* tok){
   else if ((ch >= 'A') && (ch <= 'Z')){
     tok->type = CARD;
     while ((ch == '_') || ((ch >= 'A') && (ch <= 'Z') && (i < TOKEN_SIZE-1 ) && (!(feof(f))))){
-      tok->str[i] = ch;
+      tok->str[i] = toupper(ch);
       ch = getc(f);
       i++;
     }
