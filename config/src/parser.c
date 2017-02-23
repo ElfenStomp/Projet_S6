@@ -76,7 +76,6 @@ void lexer(FILE *f, struct token* tok){
     tok->type = CARD;
     while ((ch == '_') || ((toupper(ch) >= 'A') && (toupper(ch) <= 'Z') && (i < TOKEN_SIZE-1 ) && (!(feof(f))))){
       tok->str[i] = toupper(ch);
-      printf("%c\n",tok->str[i]);
       ch = getc(f);
       i++;
     }
@@ -237,9 +236,9 @@ int check_if_valid(FILE* f){
     while (e->t.type == RETURN) //possibly more than one RETURN
       e = e->next;
   }
-  
+  free_list(l);  
   return FILE_OK;
-  
+
 }
 
 /* void parse(FILE* f){ */
