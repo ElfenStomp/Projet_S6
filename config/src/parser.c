@@ -72,10 +72,11 @@ void lexer(FILE *f, struct token* tok){
     tok->type = END_OF_FILE;
     tok->str[0] = '\0';
   }
-  else if ((ch >= 'A') && (ch <= 'Z')){
+  else if ((toupper(ch) >= 'A') && (toupper(ch) <= 'Z')){
     tok->type = CARD;
-    while ((ch == '_') || ((ch >= 'A') && (ch <= 'Z') && (i < TOKEN_SIZE-1 ) && (!(feof(f))))){
+    while ((ch == '_') || ((toupper(ch) >= 'A') && (toupper(ch) <= 'Z') && (i < TOKEN_SIZE-1 ) && (!(feof(f))))){
       tok->str[i] = toupper(ch);
+      printf("%c\n",tok->str[i]);
       ch = getc(f);
       i++;
     }
