@@ -67,5 +67,5 @@ void free_list(struct token_list*);
 struct token_list* find_token_by_type(struct token_list*, enum token_type);
 //returns a list containing all BUT tokens of a given type in the parameter list
 struct token_list* remove_token_by_type(struct token_list*, enum token_type);
-//Returns a token list contaning all tokens of a given file 
+
 #endif // _TOKEN_LIST_H_
