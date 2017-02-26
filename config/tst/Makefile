@@ -1,22 +1,19 @@
+CC=gcc
 CFLAGS= -std=c99 -Wall -Werror -Wextra
+EXEC= test clean
 DEBUG= -g -O0
-OBJFILES= token_list.o test_struct_list.o parser.o test_parser.o
+SRC= ../src/token_list.c ../src/parser.c test_struct_list.c test_parser.c
+OBJ=$(SRC:.c=.o) 
 
-test:	$(OBJFILES)
-	gcc $(CFLAGS) token_list.o test_struct_list.o -o test_struct_list
-	gcc $(CFLAGS) token_list.o  parser.o test_parser.o -o test_parser
+all: $(EXEC)
 
-token_list.o:
-	gcc $(CFLAGS) -c $(DEBUG) ../src/token_list.c
+test: $(OBJ)
+	@mv ../src/*.o $(PWD)
+	$(CC) $(CFLAGS) token_list.o test_struct_list.o -o test_struct_list
+	$(CC) $(CFLAGS) token_list.o  parser.o test_parser.o -o test_parser
 
-test_struct_list.o:
-	gcc $(CFLAGS) -c $(DEBUG) test_struct_list.c
-
-test_parser.o:
-	gcc $(CFLAGS) -c $(DEBUG) test_parser.c
-
-parser.o:
-	gcc $(CFLAGS) -c $(DEBUG) ../src/parser.c
+%.o : %.c
+	@$(CC) $(CFLAGS) -o $@ -c $< $(DEBUG)
 
 clean:
-	rm -f *.o *~
+	@rm -f *.o

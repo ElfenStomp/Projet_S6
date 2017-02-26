@@ -42,9 +42,10 @@ int is_empty (struct token_list* l){
 
 struct lelement* remove_head(struct token_list* l){
   if (is_empty(l))
-    return l->head;
+    return NULL; //l->head;
   struct lelement* e = l->head;
   l->head = l->head->next;
+  e->next = NULL; //a enlever
   return e;
 }
 
@@ -56,6 +57,8 @@ struct lelement* remove_head(struct token_list* l){
 int add_token(struct token_list* l, struct token tok){
   if (is_empty(l)){
     struct lelement* e = malloc(sizeof(*e));
+    if(e == NULL)
+      return ADD_FAILURE;
     e->t = tok;
     e->next = SENTINEL_AR;
     l->head = e;
@@ -63,6 +66,8 @@ int add_token(struct token_list* l, struct token tok){
   }
   struct lelement* f = l->head;
   struct lelement* g = malloc(sizeof(*g));;
+  if(g == NULL)
+    return ADD_FAILURE;
   while (f->next != SENTINEL_AR){
     f = f->next;
   }

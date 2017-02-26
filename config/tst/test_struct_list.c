@@ -16,7 +16,10 @@ void assertp(int bool){
 
 void tst_is_empty(){
   struct token_list* l = empty_list();
+  struct token tok = {NONE,"tok"};
   assertp(is_empty(l));
+  add_token(l,tok);
+  assertp(! is_empty(l));
   free_list(l);
 }
 
@@ -27,6 +30,7 @@ void tst_add_token(){
   assertp(add_token(l,tok1) == ADD_SUCCESS);
   assertp(!strcmp("tok1",l->head->t.str));
   assertp(add_token(l,tok2) == ADD_SUCCESS);
+  assertp(!strcmp("tok2",l->head->next->t.str));
   free(l);
 }
 
@@ -44,6 +48,7 @@ void tst_find_token(){
 
 void tst_remove_head(){
   struct token_list* l = empty_list();
+  assertp(remove_head(l) == NULL);
   struct token tok1 = {NONE,"tok1"};
   struct token tok2 = {NUMBER,"tok2"};  
   add_token(l,tok1);
@@ -66,9 +71,16 @@ void tst_find_token_by_type(){
   add_token(l,tok3);
   add_token(l,tok4);
 
-  struct token_list* m = find_token_by_type(l,NUMBER);
-  assertp(m->head->t.type == NUMBER);
+  struct token_list* m1 = find_token_by_type(l,NUMBER);
+  assertp(m1->head->t.type == NUMBER);
+  struct token_list* m2 = find_token_by_type(l,STAR);
+  assertp(is_empty(m2));
+  struct token_list* m3 = find_token_by_type(l,NONE);
+  assertp(m3->head->t.type == NONE);
+  assertp(m3->head->next->t.type == NONE);
   free(l);
+  free(m1);
+  free(m2);
 }
 
 void tst_remove_token_by_type(){
@@ -83,11 +95,15 @@ void tst_remove_token_by_type(){
   add_token(l,tok3);
   add_token(l,tok4);
 
-  struct token_list* m = remove_token_by_type(l,NONE);
-  assertp(!(is_empty(m)));
-  assertp(m->head->t.type == NUMBER);
-  assertp(m->head->next->t.type == ID);
+  struct token_list* m1 = remove_token_by_type(l,NONE);
+  assertp(!(is_empty(m1)));
+  assertp(m1->head->t.type == NUMBER);
+  assertp(m1->head->next->t.type == ID);
+  struct token_list* m2 = remove_token_by_type(find_token_by_type(l,NONE), NONE);
+  assertp(is_empty(m2));
   free(l);
+  free(m1);
+  free(m2);
 }
 
 int main(){
