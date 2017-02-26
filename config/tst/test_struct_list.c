@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "../src/token_list.h"
+#define NB_TEST 20
 
 int test_passed = 0;
 
@@ -114,6 +115,6 @@ int main(){
   tst_find_token_by_type();
   tst_remove_token_by_type();
   
-  printf("Structural tests passed : %d\n",test_passed);
+  printf("Structural tests passed : %d/%d\n", NB_TEST, test_passed);
   return EXIT_SUCCESS;
 }
