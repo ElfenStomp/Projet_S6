@@ -12,76 +12,27 @@
 */
 
 void lexer(FILE *f, struct token* tok){
-  int i = 0;
   char ch = getc(f);
-  if (ch == '#'){
-    tok->type = COMMENT;
-    while((ch != '\n') && (i < TOKEN_SIZE-1) && (!feof(f))){
-      tok->str[i] = ch;
-      ch = getc(f);
-      i++;
-    }
-    tok->str[i] = '\0';
-  }
-  else if (ch == '-' || ((ch >= '0') && (ch <= '9'))){
-    tok->type = NUMBER;
-    while (((ch =='-') || ((ch >= '0') && (ch <= '9'))) && (i < TOKEN_SIZE -1) && (!(feof(f)))){
-      tok->str[i] = ch;
-      ch = getc(f);
-      i++;
-    }
-    tok->str[i] = '\0';
-    fseek(f, -1, SEEK_CUR); //cursor goes back by 1 in the file
-  }
-  else if (ch == ' '){ 
-    while (ch == ' ')    //note that multiple spaces count as one
-      ch = getc(f);
-    if (ch == '\n' || feof(f)){ //empty lines are ignored
-      return;
-    }
-    fseek(f, -1, SEEK_CUR);
-    tok->type = SPACE;
-    tok->str[0] = ' ';
-    tok->str[1] = '\0';
-  }
-  else if (ch == '*'){
-    tok->type = STAR;
-    tok->str[0] = '*';
-    tok->str[1] = '\0';
-  }
-  else if (ch == '\n'){
-    tok->type = RETURN;
-    tok->str[0] = '\0';
-  }
-  else if (ch == '>'){
-    tok->type = ARROW;
-    tok->str[0] = '>';
-    tok->str[1] = '\0';
-  }
-  else if (ch == '$'){
-    tok->type = DOLLAR;
-    tok->str[0] = '$';
-    tok->str[1] = '\0';
-  }
-  else if (ch == '%'){
-    tok->type = PERCENT;
-    tok->str[0] = '%';
-    tok->str[1] = '\0';
-  }
-  else if (feof(f)){
-    tok->type = END_OF_FILE;
-    tok->str[0] = '\0';
-  }
-  else if ((toupper(ch) >= 'A') && (toupper(ch) <= 'Z')){
-    tok->type = CARD;
-    while ((ch == '_') || ((toupper(ch) >= 'A') && (toupper(ch) <= 'Z') && (i < TOKEN_SIZE-1 ) && (!(feof(f))))){
-      tok->str[i] = toupper(ch);
-      ch = getc(f);
-      i++;
-    }
-    tok->str[i] = '\0';
-    fseek(f, -1, SEEK_CUR);
-  }
+  if (ch == '#')
+    token_comment(f, ch, tok);
+  else if (ch == '-' || ((ch >= '0') && (ch <= '9')))
+    token_number(f, ch, tok);
+  else if (ch == ' ') 
+    token_space(f, ch, tok);
+  else if (ch == '*')
+    token_star(tok);
+  else if (ch == '\n')
+    token_return(tok);
+  else if (ch == '>')
+    token_arrow(tok);
+  else if (ch == '$')
+    token_dollar(tok);
+  else if (ch == '%')
+    token_percent(tok);
+  else if (feof(f))
+    token_end(tok);
+  else if ((toupper(ch) >= 'A') && (toupper(ch) <= 'Z'))
+    token_card(f, ch, tok);
 }
 
 /*
@@ -98,20 +49,6 @@ struct token_list* build_token_list(FILE *f){
       add_token(l,tok);
   }
   return l;
-}
-
-/*
-  returns 1 if card is a valid sapotache card, 0 otherwise
- */
-
-int check_card(char* card){
-  //Tab that contains all valid card types
-  char* cards[] = {"V_LINE","H_LINE","V_CROSS","H_CROSS","X_CROSS","L_TURN","R_TURN","D_END","BOULDER","B_AXE","B_LAMP","B_CART","R_AXE","R_LAMP","R_CART","R_ALL"};
-  int len = 16;
-  for (int i = 0; i < len; i++)
-    if (!(strcmp(card,cards[i])))
-      return 1;
-  return 0;
 }
 
 /*
