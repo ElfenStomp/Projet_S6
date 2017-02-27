@@ -32,7 +32,7 @@ struct token_list* empty_list() {
   Returns 1 if the list is empty, 0 otherwise
  */
 
-int is_empty (struct token_list* l){
+int is_empty (const struct token_list* l){
   return (l->head == SENTINEL_AR);
 }
 

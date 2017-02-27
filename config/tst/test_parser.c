@@ -55,7 +55,7 @@ void tst_check_if_valid(char* file){
 // - Messages de description
 // - vérifier tst_build_token_list 
 int main(int argc, char* argv[]){
-  
+  printf("%s", argv[0]);
   if (argc != 1) {
     printf("Usage ./test_parser\n");
     return EXIT_FAILURE;

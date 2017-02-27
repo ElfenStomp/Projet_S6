@@ -52,7 +52,7 @@ struct token_list {
 //creates an empty list
 struct token_list* empty_list();
 //returns 1 if list is empty, 0 otherwise
-int is_empty (struct token_list*);
+int is_empty (const struct token_list*);
 //removes the head of the list and returns it
 struct lelement* remove_head(struct token_list*);
 //adds a token at the end of the list
