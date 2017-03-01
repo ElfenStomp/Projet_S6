@@ -82,6 +82,7 @@ void tst_find_token_by_type(){
   free_list(l);
   free_list(m1);
   free_list(m2);
+  free_list(m3);
 }
 
 void tst_remove_token_by_type(){
@@ -100,11 +101,13 @@ void tst_remove_token_by_type(){
   assertp(!(is_empty(m1)));
   assertp(m1->head->t.type == NUMBER);
   assertp(m1->head->next->t.type == ID);
-  struct token_list* m2 = remove_token_by_type(find_token_by_type(l,NONE), NONE);
-  assertp(is_empty(m2));
+  struct token_list* m2 = find_token_by_type(l,NONE);
+  struct token_list* m3 = remove_token_by_type(m2, NONE);
+  assertp(is_empty(m3));
   free_list(l);
   free_list(m1);
   free_list(m2);
+  free_list(m3);
 }
 
 int main(){
