@@ -32,7 +32,7 @@ void tst_add_token(){
   assertp(!strcmp("tok1",l->head->t.str));
   assertp(add_token(l,tok2) == ADD_SUCCESS);
   assertp(!strcmp("tok2",l->head->next->t.str));
-  free(l);
+  free_list(l);
 }
 
 void tst_find_token(){
@@ -44,20 +44,20 @@ void tst_find_token(){
   add_token(l,tok2);
   assertp(find_token(l,tok1));
   assertp(find_token(l,tok2));
-  free(l);
+  free_list(l);
 }
 
 void tst_remove_head(){
   struct token_list* l = empty_list();
-  assertp(remove_head(l) == NULL);
+  assertp(!(strcmp(remove_head(l).str,"ERR_EMPTY_LIST")));
   struct token tok1 = {NONE,"tok1"};
   struct token tok2 = {NUMBER,"tok2"};  
   add_token(l,tok1);
   add_token(l,tok2);
-  struct lelement* e = remove_head(l);
-  assertp(e->t.type == NONE);
+  struct token t = remove_head(l);
+  assertp(t.type == NONE);
   assertp(l->head->t.type == NUMBER);
-  free(l);
+  free_list(l);
 }
 
 void tst_find_token_by_type(){
@@ -79,9 +79,9 @@ void tst_find_token_by_type(){
   struct token_list* m3 = find_token_by_type(l,NONE);
   assertp(m3->head->t.type == NONE);
   assertp(m3->head->next->t.type == NONE);
-  free(l);
-  free(m1);
-  free(m2);
+  free_list(l);
+  free_list(m1);
+  free_list(m2);
 }
 
 void tst_remove_token_by_type(){
@@ -102,9 +102,9 @@ void tst_remove_token_by_type(){
   assertp(m1->head->next->t.type == ID);
   struct token_list* m2 = remove_token_by_type(find_token_by_type(l,NONE), NONE);
   assertp(is_empty(m2));
-  free(l);
-  free(m1);
-  free(m2);
+  free_list(l);
+  free_list(m1);
+  free_list(m2);
 }
 
 int main(){
@@ -115,6 +115,6 @@ int main(){
   tst_find_token_by_type();
   tst_remove_token_by_type();
   
-  printf("Structural tests passed : %d/%d\n", NB_TEST, test_passed);
+  printf("Structural tests passed : %d/%d\n", test_passed,NB_TEST);
   return EXIT_SUCCESS;
 }

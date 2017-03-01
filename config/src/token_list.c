@@ -37,16 +37,19 @@ int is_empty (const struct token_list* l){
 }
 
 /*
-  removes head of list and returns it
+  removes the token at the head of list and returns it
  */
 
-struct lelement* remove_head(struct token_list* l){
-  if (is_empty(l))
-    return NULL; //l->head;
+struct token remove_head(struct token_list* l){
+  if (is_empty(l)){
+    struct token t_err = {NONE,"ERR_EMPTY_LIST"};
+    return t_err;
+  }
+  struct token t = l->head->t;
   struct lelement* e = l->head;
   l->head = l->head->next;
-  e->next = NULL; //a enlever
-  return e;
+  free(e);
+  return t;
 }
 
 /*
@@ -144,7 +147,7 @@ void free_list(struct token_list *l){
       free(e);
       e = e->next;
     }
-  } 
+  }
   free(l);
 }
 
