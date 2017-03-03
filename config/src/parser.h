@@ -20,6 +20,8 @@ void token_end(struct token*);
 void token_card(FILE*, char, struct token*);
 
 int check_card(char*);
+int check_deck(struct lelement *);
+int check_board(struct lelement *);
 
 struct lelement * write_configuration(FILE*, struct lelement *);
 struct lelement * write_card_types(FILE*, struct lelement *);
