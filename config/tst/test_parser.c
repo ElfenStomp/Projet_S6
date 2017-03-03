@@ -75,6 +75,10 @@ int main(int argc, char* argv[]){
     closedir(d);
   }
 
+  FILE* f = fopen("sapo1.ok.txt", "r");
+  parse(remove_token_by_type(build_token_list(f), COMMENT));
+  fclose(f);
+
   return EXIT_SUCCESS;
 }
 

@@ -101,3 +101,188 @@ int check_card(char* card){
   return 0;
 }
 
+struct lelement * write_configuration(FILE* f, struct lelement *e){
+  fprintf(f, "Configuration : %sx%s\n", e->next->next->t.str, e->t.str);
+  return e->next->next->next;
+}
+
+struct lelement * write_card_types(FILE* f, struct lelement *e){
+  struct lelement *d = e;
+  int k = 0;
+  fprintf(f, "Card types    : ");
+  while(e->t.type != END_OF_FILE){
+    if(e->t.type == CARD)
+      k++;
+    e = e->next;
+  }
+  fprintf(f, "%d\n", k);
+  return d;
+}
+
+struct lelement * write_nb_cards(FILE* f, struct lelement *e){
+  struct lelement *d = e;
+  int k = 0;
+  fprintf(f, "Nb of cards   : ");
+  while(e->t.type != END_OF_FILE){
+    if(e->t.type == CARD){
+      e = e->next->next;
+      k = k + atoi(e->t.str);
+      }
+    e = e->next;
+  }
+  fprintf(f, "%d\n", k);
+  return d;
+}
+
+struct lelement * write_objectives(FILE* f, struct lelement *e){
+  e = e->next;
+  int nb_obj = 0;
+  int line = 0;
+  int column = 0;
+  int width = 0;
+  struct lelement *d;
+
+  fprintf(f, "Objectives    :");
+  while (!(e->t.type == STAR || e->t.type == ARROW || e->t.type == DOLLAR || e->t.type == PERCENT))
+    e = e->next;
+  d = e;
+  
+  while (e->t.type == STAR || e->t.type == ARROW || e->t.type == DOLLAR || e->t.type == PERCENT || e->t.type == RETURN){
+    if(e->t.type == DOLLAR){
+      nb_obj++;
+    }
+    if (e->t.type == RETURN){
+      line++;
+      width++;
+      column = 0;
+    }
+    else{
+      column++;
+    }
+    e = e->next;
+  }
+  
+  column = 0;
+  line = 0;
+  fprintf(f, " %d ", nb_obj);
+  e = d;
+  
+  while (e->t.type == STAR || e->t.type == ARROW || e->t.type == DOLLAR || e->t.type == PERCENT || e->t.type == RETURN){
+    if(e->t.type == DOLLAR){
+      fprintf(f, "(%d, %d) ", column, width - line - 1);
+    }
+    if (e->t.type == RETURN){
+      line++;
+      column = 0;
+    }
+    else{
+      column++;
+    }
+    e = e->next;
+  }
+  fprintf(f, "\n");
+  return d;
+}
+
+struct lelement * write_holes(FILE* f, struct lelement *e){
+  int nb_holes = 0;
+  int line = 0;
+  int column = 0;
+  int width = 0;
+  struct lelement *d = e;
+
+  fprintf(f, "Holes         :");
+  while (e->t.type == STAR || e->t.type == ARROW || e->t.type == DOLLAR || e->t.type == PERCENT || e->t.type == RETURN){
+    if(e->t.type == PERCENT){
+      nb_holes++;
+    }
+    if (e->t.type == RETURN){
+      line++;
+      width++;
+      column = 0;
+    }
+    else{
+      column++;
+    }
+    e = e->next;
+  }
+  
+  column = 0;
+  line = 0;
+  fprintf(f, " %d ", nb_holes);
+  e = d;
+  
+  while (e->t.type == STAR || e->t.type == ARROW || e->t.type == DOLLAR || e->t.type == PERCENT || e->t.type == RETURN){
+    if(e->t.type == PERCENT){
+      fprintf(f, "(%d, %d) ", column, width - line - 1);
+    }
+    if (e->t.type == RETURN){
+      line++;
+      column = 0;
+    }
+    else{
+      column++;
+    }
+    e = e->next;
+  }
+  fprintf(f, "\n");
+  return e;
+}
+  
+struct lelement * write_allow_boulder(FILE* f, struct lelement *e){
+  struct lelement *d = e;
+  int k = 0;
+  fprintf(f, "Allow boulder : ");
+  while(e->t.type != END_OF_FILE){
+    if(e->t.type == CARD){
+      if(!strcmp(e->t.str, "BOULDER")){
+	k = 1;
+	fprintf(f, "yes\n");
+	break;
+      }
+    }
+    e = e->next;
+  }
+  if(!k)
+    fprintf(f, "no\n");
+  return d;
+}
+
+struct lelement * write_allow_breaks(FILE* f, struct lelement *e){
+  struct lelement *d = e;
+  int k = 0;
+  fprintf(f, "Allow breaks  : ");
+  while(e->t.type != END_OF_FILE){
+    if(e->t.type == CARD){
+      if((e->t.str[0] == 'B') && (e->t.str[1] == '_')){
+	k = 1;
+	fprintf(f, "yes\n");
+	break;
+      }
+    }
+    e = e->next;
+  }
+  if(!k)
+    fprintf(f, "no\n");
+  return d;
+}
+
+struct lelement * write_repair_break(FILE* f, struct lelement *e){
+  struct lelement *d = e;
+  int k = 0;
+  fprintf(f, "Repair=breaks : ");
+  while(e->t.type != END_OF_FILE){
+    if(e->t.type == CARD){
+      if((e->t.str[0] == 'R') && (e->t.str[1] == '_')){
+	k = 1;
+	fprintf(f, "yes\n");
+	break;
+      }
+    }
+    e = e->next;
+  }
+  if(!k)
+    fprintf(f, "no\n");
+  return d;
+}
+

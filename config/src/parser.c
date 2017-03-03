@@ -178,6 +178,25 @@ int check_if_valid(FILE* f){
 
 }
 
-/* void parse(FILE* f){ */
-  
-/* } */
+/*
+Create the file (l must be checked before)
+*/
+void parse(struct token_list* l){
+   FILE * f = fopen("test", "w");
+   if (f == NULL) {
+     printf("*** cannot open file \n");
+     return;
+   }
+   struct lelement* e = l->head;
+   e = write_configuration(f, e);
+   e = write_card_types(f, e);
+   e = write_nb_cards(f, e);
+   e = write_objectives(f, e);
+   e = write_holes(f, e);
+   e = write_allow_boulder(f, e);
+   e = write_allow_breaks(f, e);
+   e = write_repair_break(f, e);
+     
+   free(l);
+   fclose(f);
+} 
