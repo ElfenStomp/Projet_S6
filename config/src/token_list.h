@@ -4,6 +4,7 @@
 #define ADD_SUCCESS 0
 #define ADD_FAILURE 1
 #define INVALID_FILE -666
+#define ERR_EMPTY_LIST 2
 
 enum token_type {
   NONE,
@@ -53,8 +54,8 @@ struct token_list {
 struct token_list* empty_list();
 //returns 1 if list is empty, 0 otherwise
 int is_empty (const struct token_list*);
-//removes the head of the list and returns it
-struct lelement* remove_head(struct token_list*);
+//removes the token at the head of the list and returns it
+struct token remove_head(struct token_list*);
 //adds a token at the end of the list
 int add_token(struct token_list*, struct token);
 //returns 1 if the token is in the list, 0 otherwise

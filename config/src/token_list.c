@@ -37,16 +37,19 @@ int is_empty (const struct token_list* l){
 }
 
 /*
-  removes head of list and returns it
+  removes the token at the head of list and returns it
  */
 
-struct lelement* remove_head(struct token_list* l){
-  if (is_empty(l))
-    return NULL; //l->head;
+struct token remove_head(struct token_list* l){
+  if (is_empty(l)){
+    struct token t_err = {NONE,"ERR_EMPTY_LIST"};
+    return t_err;
+  }
+  struct token t = l->head->t;
   struct lelement* e = l->head;
   l->head = l->head->next;
-  e->next = NULL; //a enlever
-  return e;
+  free(e);
+  return t;
 }
 
 /*
@@ -65,7 +68,7 @@ int add_token(struct token_list* l, struct token tok){
     return ADD_SUCCESS;
   }
   struct lelement* f = l->head;
-  struct lelement* g = malloc(sizeof(*g));;
+  struct lelement* g = malloc(sizeof(*g));
   if(g == NULL)
     return ADD_FAILURE;
   while (f->next != SENTINEL_AR){
@@ -139,12 +142,14 @@ int find_token(struct token_list* l, struct token tok){
 
 void free_list(struct token_list *l){
   struct lelement *e = l->head;
+  struct lelement *f = NULL;
   if (!is_empty(l)){
     while (e != SENTINEL_AR){
+      f = e->next;
       free(e);
-      e = e->next;
+      e = f;
     }
-  } 
+  }
   free(l);
 }
 
