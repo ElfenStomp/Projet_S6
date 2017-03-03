@@ -74,7 +74,7 @@ int check_if_valid(FILE* f){
     return FILE_CORRUPT;
   }
   
-  int deck = check_deck(e); 
+  int deck = check_deck(e);
   free_list(l);  
   return deck;
 

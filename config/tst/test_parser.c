@@ -62,20 +62,20 @@ int main(int argc, char* argv[]){
     return EXIT_FAILURE;
   }
   
-  DIR *d;
-  struct dirent *dir;
-  d = opendir(".");
+  /* DIR *d; */
+  /* struct dirent *dir; */
+  /* d = opendir("."); */
 
-  if (d) {
-    while ((dir = readdir(d)) != NULL) {
-      if (strstr(dir->d_name, "sapo") != NULL && strstr(dir->d_name, "txt") != NULL) {
-	tst_check_if_valid(dir->d_name);
-  	//tst_build_token_list(dir->d_name);
-      }
-    }
-    closedir(d);
-  }
-
+  /* if (d) { */
+  /*   while ((dir = readdir(d)) != NULL) { */
+  /*     if (strstr(dir->d_name, "sapo") != NULL && strstr(dir->d_name, "txt") != NULL) { */
+  /* 	tst_check_if_valid(dir->d_name); */
+  /* 	//tst_build_token_list(dir->d_name); */
+  /*     } */
+  /*   } */
+  /*   closedir(d); */
+  /* } */
+  tst_check_if_valid("sapo1.ok.txt");
   FILE* f = fopen("sapo1.ok.txt", "r");
   struct token_list* m = build_token_list(f);
   struct token_list* l = remove_token_by_type(m, COMMENT);
@@ -85,13 +85,3 @@ int main(int argc, char* argv[]){
 
   return EXIT_SUCCESS;
 }
-
-
-
-
-
-
-
-
-
-
