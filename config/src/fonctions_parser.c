@@ -103,6 +103,14 @@ int check_card(char* card){
 }
 
 //_________________________________________________________________________________________
+int already_seen(char* card_type, char* card_seen[], int nb_card_seen){
+  for(int i = 0; i < nb_card_seen; i++){
+    if(!strcmp(card_type, card_seen[i]))
+      return 1;
+  }
+  return 0;
+}
+
 struct lelement * write_configuration(FILE* f, struct lelement *e){
   fprintf(f, "Configuration : %sx%s\n", e->next->next->t.str, e->t.str);
   return e->next->next->next;
@@ -110,14 +118,20 @@ struct lelement * write_configuration(FILE* f, struct lelement *e){
 
 struct lelement * write_card_types(FILE* f, struct lelement *e){
   struct lelement *d = e;
-  int k = 0;
+  char *card_seen[MAX_CARD_TYPES];
+  int nb_card_seen = 0;
+  
   fprintf(f, "Card types    : ");
   while(e->t.type != END_OF_FILE){
-    if(e->t.type == CARD)
-      k++;
+    if(e->t.type == CARD){
+      if(!already_seen(e->t.str, card_seen, nb_card_seen)){
+	card_seen[nb_card_seen] = e->t.str;
+	nb_card_seen++;
+      }
+    }
     e = e->next;
   }
-  fprintf(f, "%d\n", k);
+  fprintf(f, "%d\n", nb_card_seen);
   return d;
 }
 

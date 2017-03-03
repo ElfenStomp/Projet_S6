@@ -3,6 +3,7 @@
 
 #define FILE_OK 1
 #define FILE_CORRUPT -666
+#define MAX_CARD_TYPES 50 
 
 struct token_list* build_token_list(FILE*);
 int check_if_valid(FILE*);
