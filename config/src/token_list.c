@@ -117,6 +117,7 @@ struct token_list* remove_token_by_type(struct token_list *l, enum token_type ty
       add_token(m,e->t);
     e = e->next;
   }
+  //free_list(l);
   return m;
 }
 
