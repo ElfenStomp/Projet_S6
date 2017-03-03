@@ -4,7 +4,7 @@
 #include <ctype.h>
 #include "token_list.h"
 #include "parser.h"
-
+//_________________________________________________________________________________________
 void token_comment(FILE *f, char ch, struct token* tok){
   int i = 0;
   tok->type = COMMENT;
@@ -86,6 +86,7 @@ void token_card(FILE *f, char ch, struct token* tok){
   tok->str[i] = '\0';
   fseek(f, -1, SEEK_CUR);
 }
+//_________________________________________________________________________________________
 
 /*
   returns 1 if card is a valid sapotache card, 0 otherwise
@@ -101,6 +102,125 @@ int check_card(char* card){
   return 0;
 }
 
+int check_deck(struct lelement *e){
+  //Next token should be a card
+  while (e->t.type != CARD){
+    if (!(e->t.type == RETURN || e->t.type == SPACE))
+      return FILE_CORRUPT;
+    e = e->next;
+  }
+  //All following sequences of tokens must be CARD SPACE NUMBER RETURN
+  while (e->t.type != END_OF_FILE){
+    if (e->t.type != CARD){
+      return FILE_CORRUPT;
+    }
+    if (!(check_card(e->t.str)))
+      return FILE_CORRUPT;
+    e = e->next;
+    
+    if (e->t.type != SPACE)
+      return FILE_CORRUPT;
+    e = e->next;
+
+    if (e->t.type != NUMBER)
+      return FILE_CORRUPT;
+    if (atoi(e->t.str) <= 0)
+      return FILE_CORRUPT;
+    e = e->next;
+
+    if (e->t.type != RETURN)
+      return FILE_CORRUPT;
+
+    while (e->t.type == RETURN) //possibly more than one RETURN
+      e = e->next;
+  }
+  return FILE_OK;
+}
+
+int check_board(struct lelement *e){
+  int col = 0;
+  int height = 0;
+  int width = 0;
+  int lines = 0;
+  int holes = 0;
+  int start = 0;
+  int stars = 0;
+  int finish = 0;
+  
+  //File must begin with NUMBER SPACE NUMBER RETURN
+  if (e->t.type != NUMBER)
+    return FILE_CORRUPT;
+  width = atoi(e->t.str);
+  e = e->next;
+  if (e->t.type != SPACE)
+    return FILE_CORRUPT;
+  e = e->next;
+  if (e->t.type != NUMBER)
+    return FILE_CORRUPT;
+  height = atoi(e->t.str);
+  e = e->next;
+  if (e->t.type != RETURN)
+    return FILE_CORRUPT;
+
+  if (width <= 0 || height <= 0)
+    return FILE_CORRUPT;
+  
+  //moving to board specification
+  while (!(e->t.type == STAR || e->t.type == ARROW || e->t.type == DOLLAR || e->t.type == PERCENT))
+    e = e->next;
+
+  while ((lines < height) && (e->t.type == STAR || e->t.type == ARROW || e->t.type == DOLLAR || e->t.type == PERCENT || e->t.type == RETURN)){
+
+    if (!(e->t.type == STAR || e->t.type == ARROW || e->t.type == DOLLAR || e->t.type == PERCENT || e->t.type == RETURN))
+      return FILE_CORRUPT;
+    
+    if (e->t.type == STAR){
+      stars++;
+      col++;
+      e = e->next;
+      continue;
+    }
+    if (e->t.type == ARROW){
+      start++;
+      col++;
+      e = e->next;
+      continue;
+    }
+    if (e->t.type == DOLLAR){
+      finish++;
+      col++;
+      e = e->next;
+      continue;
+    }
+    if (e->t.type == PERCENT){
+      holes++;
+      col++;
+      e = e->next;
+      continue;
+    }
+    if (e->t.type == RETURN){
+      lines++;
+      if (col != width)
+	return FILE_CORRUPT;
+      col = 0;
+      e = e->next;
+    }
+  }
+
+  //At least one finishing point
+  if (finish < 1)
+    return FILE_CORRUPT;
+  //Exactly one starting point
+  if (start != 1)
+    return FILE_CORRUPT;
+  
+  if (lines != height)
+    return FILE_CORRUPT;
+ 
+  return FILE_OK;
+}
+
+//_________________________________________________________________________________________
 struct lelement * write_configuration(FILE* f, struct lelement *e){
   fprintf(f, "Configuration : %sx%s\n", e->next->next->t.str, e->t.str);
   return e->next->next->next;

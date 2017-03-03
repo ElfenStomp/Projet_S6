@@ -59,122 +59,23 @@ struct token_list* build_token_list(FILE *f){
 int check_if_valid(FILE* f){
   struct token_list* l = build_token_list(f);
   l = remove_token_by_type(l, COMMENT); //removes comments from list
-  if (is_empty(l))
+  
+  if (is_empty(l)){
+    free(l);
     return FILE_CORRUPT;
+  }
+
   struct lelement* e = l->head;
-  int col = 0;
-  int height = 0;
-  int width = 0;
-  int lines = 0;
-  int holes = 0;
-  int start = 0;
-  int stars = 0;
-  int finish = 0;
   
-  //File must begin with NUMBER SPACE NUMBER RETURN
-  if (e->t.type != NUMBER)
+  int board = check_board(e);
+  if(board == FILE_CORRUPT){
+    free(l);
     return FILE_CORRUPT;
-  width = atoi(e->t.str);
-  e = e->next;
-  if (e->t.type != SPACE)
-    return FILE_CORRUPT;
-  e = e->next;
-  if (e->t.type != NUMBER)
-    return FILE_CORRUPT;
-  height = atoi(e->t.str);
-  e = e->next;
-  if (e->t.type != RETURN)
-    return FILE_CORRUPT;
-
-  if (width <= 0 || height <= 0)
-    return FILE_CORRUPT;
-  
-  //moving to board specification
-  while (!(e->t.type == STAR || e->t.type == ARROW || e->t.type == DOLLAR || e->t.type == PERCENT))
-    e = e->next;
-
-  while ((lines < height) && (e->t.type == STAR || e->t.type == ARROW || e->t.type == DOLLAR || e->t.type == PERCENT || e->t.type == RETURN)){
-
-    if (!(e->t.type == STAR || e->t.type == ARROW || e->t.type == DOLLAR || e->t.type == PERCENT || e->t.type == RETURN))
-      return FILE_CORRUPT;
-    
-    if (e->t.type == STAR){
-      stars++;
-      col++;
-      e = e->next;
-      continue;
-    }
-    if (e->t.type == ARROW){
-      start++;
-      col++;
-      e = e->next;
-      continue;
-    }
-    if (e->t.type == DOLLAR){
-      finish++;
-      col++;
-      e = e->next;
-      continue;
-    }
-    if (e->t.type == PERCENT){
-      holes++;
-      col++;
-      e = e->next;
-      continue;
-    }
-    if (e->t.type == RETURN){
-      lines++;
-      if (col != width)
-	return FILE_CORRUPT;
-      col = 0;
-      e = e->next;
-    }
   }
-
-  //At least one finishing point
-  if (finish < 1)
-    return FILE_CORRUPT;
-  //Exactly one starting point
-  if (start != 1)
-    return FILE_CORRUPT;
   
-  if (lines != height)
-    return FILE_CORRUPT;
-  
-  //Next token should be a card
-  while (e->t.type != CARD){
-    if (!(e->t.type == RETURN || e->t.type == SPACE))
-      return FILE_CORRUPT;
-    e = e->next;
-  }
-
-  //All following sequences of tokens must be CARD SPACE NUMBER RETURN
-  while (e->t.type != END_OF_FILE){
-    if (e->t.type != CARD){
-      return FILE_CORRUPT;
-    }
-    if (!(check_card(e->t.str)))
-      return FILE_CORRUPT;
-    e = e->next;
-    
-    if (e->t.type != SPACE)
-      return FILE_CORRUPT;
-    e = e->next;
-
-    if (e->t.type != NUMBER)
-      return FILE_CORRUPT;
-    if (atoi(e->t.str) <= 0)
-      return FILE_CORRUPT;
-    e = e->next;
-
-    if (e->t.type != RETURN)
-      return FILE_CORRUPT;
-
-    while (e->t.type == RETURN) //possibly more than one RETURN
-      e = e->next;
-  }
+  int deck = check_deck(e); 
   free_list(l);  
-  return FILE_OK;
+  return deck;
 
 }
 
