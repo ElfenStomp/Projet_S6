@@ -57,11 +57,12 @@ struct token_list* build_token_list(FILE *f){
  */
 
 int check_if_valid(FILE* f){
-  struct token_list* l = build_token_list(f);
-  l = remove_token_by_type(l, COMMENT); //removes comments from list
+  struct token_list* m = build_token_list(f);
+  struct token_list* l = remove_token_by_type(m, COMMENT); //removes comments from list
+  free_list(m);
   
   if (is_empty(l)){
-    free(l);
+    free_list(l);
     return FILE_CORRUPT;
   }
 
@@ -69,11 +70,11 @@ int check_if_valid(FILE* f){
   
   int board = check_board(e);
   if(board == FILE_CORRUPT){
-    free(l);
+    free_list(l);
     return FILE_CORRUPT;
   }
   
-  int deck = check_deck(e); 
+  int deck = check_deck(e);
   free_list(l);  
   return deck;
 
@@ -98,6 +99,6 @@ void parse(struct token_list* l){
    e = write_allow_breaks(f, e);
    e = write_repair_break(f, e);
      
-   free(l);
+   free_list(l);
    fclose(f);
 } 

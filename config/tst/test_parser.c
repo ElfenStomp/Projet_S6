@@ -43,10 +43,11 @@ void tst_check_if_valid(char* file){
   }
 
   //assertp(check_if_valid(f) == FILE_OK);
-  if(check_if_valid(f)==1)
+  if(check_if_valid(f)==FILE_OK)
     printf("%s ...FILE_OK\n",file);
   else
     printf("%s ...FILE_CORRUPT\n",file);
+  fclose(f);
 }
 
 // TO DO (camille): 
@@ -61,33 +62,26 @@ int main(int argc, char* argv[]){
     return EXIT_FAILURE;
   }
   
-  DIR *d;
-  struct dirent *dir;
-  d = opendir(".");
+  /* DIR *d; */
+  /* struct dirent *dir; */
+  /* d = opendir("."); */
 
-  if (d) {
-    while ((dir = readdir(d)) != NULL) {
-      if (strstr(dir->d_name, "sapo") != NULL && strstr(dir->d_name, "txt") != NULL) {
-	tst_check_if_valid(dir->d_name);
-  	//tst_build_token_list(dir->d_name);
-      }
-    }
-    closedir(d);
-  }
-
+  /* if (d) { */
+  /*   while ((dir = readdir(d)) != NULL) { */
+  /*     if (strstr(dir->d_name, "sapo") != NULL && strstr(dir->d_name, "txt") != NULL) { */
+  /* 	tst_check_if_valid(dir->d_name); */
+  /* 	//tst_build_token_list(dir->d_name); */
+  /*     } */
+  /*   } */
+  /*   closedir(d); */
+  /* } */
+  tst_check_if_valid("sapo1.ok.txt");
   FILE* f = fopen("sapo1.ok.txt", "r");
-  parse(remove_token_by_type(build_token_list(f), COMMENT));
+  struct token_list* m = build_token_list(f);
+  struct token_list* l = remove_token_by_type(m, COMMENT);
+  free_list(m);
+  parse(l);
   fclose(f);
 
   return EXIT_SUCCESS;
 }
-
-
-
-
-
-
-
-
-
-
